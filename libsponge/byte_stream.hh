@@ -2,6 +2,7 @@
 #define SPONGE_LIBSPONGE_BYTE_STREAM_HH
 
 #include <string>
+#include <vector>
 
 //! \brief An in-order byte stream.
 
@@ -11,7 +12,13 @@
 class ByteStream {
   private:
     // Your code here -- add private members as necessary.
-
+    // static const uint32_t maxLen = UINT32_MAX; 
+    // char byteQueue[maxLen];//注意不要用固定大小的数组，需要实时初始化，不然会SegFault
+    std::vector<int> byteQueue;
+    size_t head = 0, tail = 0, cap;
+    uint64_t totWrite = 0, totRead = 0;
+    bool isEnd = false;
+    
     // Hint: This doesn't need to be a sophisticated data structure at
     // all, but if any of your tests are taking longer than a second,
     // that's a sign that you probably want to keep exploring

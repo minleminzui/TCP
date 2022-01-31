@@ -8,7 +8,15 @@ using namespace std;
 
 void get_URL(const string &host, const string &path) {
     // Your code here.
-
+    TCPSocket client_sock;
+    client_sock.connect(Address(host, "http"));
+    string s = "GET " + path + " HTTP/1.1\r\n" + "Host: "+ host +"\r\n" + "Connection: close\r\n\r\n";
+    //与手动调用webget一致，将请求内容通过连接传递
+    client_sock.write(s);
+    while(!client_sock.eof()){//需要检测是否读到所有server传递的内容
+        cout<<client_sock.read();
+    }
+    client_sock.close();//别忘了关闭套接字
     // You will need to connect to the "http" service on
     // the computer whose name is in the "host" string,
     // then request the URL path given in the "path" string.

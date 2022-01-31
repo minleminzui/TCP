@@ -38,9 +38,11 @@ int main() {
             ByteStreamTestHarness test{"overwrite-clear-overwrite", 2};
 
             test.execute(Write{"cat"}.with_bytes_written(2));
+            // test.execute(Peek{"GUAN"});
             test.execute(Pop{2});
+            // test.execute(RemainingCapacity{0});
             test.execute(Write{"tac"}.with_bytes_written(2));
-
+            // test.execute(Peek{"GUAN"});
             test.execute(InputEnded{false});
             test.execute(BufferEmpty{false});
             test.execute(Eof{false});
