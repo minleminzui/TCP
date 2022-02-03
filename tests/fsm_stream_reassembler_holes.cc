@@ -25,7 +25,7 @@ int main() {
 
             test.execute(SubmitSegment{"b", 1});
             test.execute(SubmitSegment{"a", 0});
-
+            
             test.execute(BytesAssembled(2));
             test.execute(BytesAvailable("ab"));
             test.execute(NotAtEof{});

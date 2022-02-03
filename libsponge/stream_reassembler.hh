@@ -5,16 +5,24 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 
 //! \brief A class that assembles a series of excerpts from a byte stream (possibly out of order,
 //! possibly overlapping) into an in-order byte stream.
 class StreamReassembler {
   private:
     // Your code here -- add private members as necessary.
-
+    // std::vector<string> unassembled;
     ByteStream _output;  //!< The reassembled in-order byte stream
     size_t _capacity;    //!< The maximum number of bytes
-
+    size_t first_unread = 0;
+    size_t first_unassembled = 0;
+    size_t first_unacceptable;
+    size_t unassembled = 0;
+    bool _eof = false;
+    std::unordered_map<size_t, bool> m_exist = {};//使用map标记index是否存在
+    std::unordered_map<size_t, char> m_char = {};//这里记得需要初始化map
+    // size_t unassembled_len;
   public:
     //! \brief Construct a `StreamReassembler` that will store up to `capacity` bytes.
     //! \note This capacity limits both the bytes that have been reassembled,
