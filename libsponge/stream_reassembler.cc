@@ -20,9 +20,11 @@ StreamReassembler::StreamReassembler(const size_t capacity) : _output(capacity),
 void StreamReassembler::push_substring(const string &data, const size_t index, const bool eof) {
     size_t len = data.size();
     first_unread = _output.bytes_read();//注意first_unread并不是永远是0
+    // printf("进入put——subtring data:%s  index: %lu eof:%d \n\n", data.c_str(), index, eof);
     for(size_t i = 0; i < len ; ++i){
         /*每个分段的字符分为有重叠与没有重叠，其中没重叠的又分为可以立即push的与不可以立即push的
         */
+    //    printf("打印%c\n",data[i]);
        size_t cur = i + index;
         if(cur < first_unread + _capacity){//如果当前字节的index超出了或等于capacity，直接丢弃
             
@@ -53,10 +55,13 @@ void StreamReassembler::push_substring(const string &data, const size_t index, c
         --unassembled;
         ++cur;
     }
+
     if(eof == true && _eof == false && index + len <=  first_unread + _capacity)
-         _eof = true;//如果最后一段字节提前到达，需要将_eof标记为true，而且一定得是这个段的最后一个字节push进了ByteStream
+         _eof = true;//如果最后一段字节提前到达，需要将_eof标记为true，而且一定得是这个段的最后一个字节push进了ByteStream,也就是没有被丢弃
     if (empty() && _eof)//判断是否需要置位ByteStreams的eof信号
         _output.end_input();
+    // printf("调试数据 empty():%d _eof:%d first_unassembled:%lu _output.eof():%d\n\n", 
+    //             empty(), _eof, first_unassembled, _output.eof());
 }
 
 size_t StreamReassembler::unassembled_bytes() const { return unassembled; }
