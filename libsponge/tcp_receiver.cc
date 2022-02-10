@@ -22,7 +22,7 @@ void TCPReceiver::segment_received(const TCPSegment &seg) {
     }
 
     uint64_t seq_start = unwrap(hdr.seqno + (hdr.syn ? 1 : 0), _isn, checkpoint);//获取当前序列号对应的absolute sequno，hdr.seqno + (hdr.syn ? 1 : 0)表示syn占据了一个序列号
-    _reassembler.push_substring(std::string(seg.payload().str()), seq_start - 1, hdr.fin);//seq——start - 1，由于syn占据了一个序列号，absolute sequno与stream index相差一
+    _reassembler.push_substring(std::string(seg.payload().str()), seq_start - 1, hdr.fin);//seq_start - 1，由于syn占据了一个序列号，absolute sequno与stream index相差一
     checkpoint = _reassembler.first_unassembled_byte();
     if(hdr.fin && !_fin && _reassembler.is_eof()){//需要fin没有被丢弃，才能把_fin置位
         _fin = true;
