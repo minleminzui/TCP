@@ -232,7 +232,6 @@ int main() {
             const size_t rto = uniform_int_distribution<uint16_t>{30, 10000}(rd);
             cfg.fixed_isn = isn;
             cfg.rt_timeout = rto;
-
             TCPSenderTestHarness test{"Don't add FIN if this would make the segment exceed the receiver's window", cfg};
             test.execute(ExpectSegment{}.with_no_flags().with_syn(true).with_payload_size(0).with_seqno(isn));
             test.execute(WriteBytes("abc").with_end_input(true));

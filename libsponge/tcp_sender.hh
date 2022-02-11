@@ -32,6 +32,22 @@ class TCPSender {
     //! the (absolute) sequence number for the next byte to be sent
     uint64_t _next_seqno{0};
 
+    // 用来保存发出了但是未收到确认的Segment，因为paload采用引用计数的方式，所以不会浪费
+    // 把需要发送的报文段push进_segments_out，owner会来pop它，也就是取它并发送到Internet，所以需要另一个queue来缓存未确认的报文段，根据FAQ1
+    std::queue<TCPSegment> _segments_outstanding{};
+    uint64_t _bytes_in_flight{0};
+    uint16_t _receiver_window_size {1};/* 初始的的_receiver_window_size需要设置为1，对应于 What should my TCPSender assume as the receiver’s window size before I’ve gotten an ACK from the receiver?
+                                                                                          One byte*/
+    // uint16_t _receiver_free_space{0};
+    uint16_t _consecutive_retransmissions{0};
+    unsigned int _rto{0};
+    size_t _tick{0};//记录一共过了多少时间，由于tick只能够被动调用，也就是我不会去调用，onwer回去调用
+    bool _timer_running{false};
+    bool _syn{false};
+    bool _fin{false};
+
+    // bool _ack_valid(uint64_t abs_ackno);
+    // void _send_segment(TCPSegment &seg);
   public:
     //! Initialize a TCPSender
     TCPSender(const size_t capacity = TCPConfig::DEFAULT_CAPACITY,
