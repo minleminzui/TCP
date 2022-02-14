@@ -41,7 +41,7 @@ class TCPSender {
     // uint16_t _receiver_free_space{0};
     uint16_t _consecutive_retransmissions{0};
     unsigned int _rto{0};
-    size_t _tick{0};//记录一共过了多少时间，由于tick只能够被动调用，也就是我不会去调用，onwer回去调用
+    size_t _tick{0};//记录一共过了多少时间距离上次接收到ack报文，由于tick只能够被动调用，也就是我不会去调用，onwer会去调用
     bool _timer_running{false};
     bool _syn{false};
     bool _fin{false};
@@ -94,6 +94,7 @@ class TCPSender {
     std::queue<TCPSegment> &segments_out() { return _segments_out; }
     //!@}
 
+    bool is_fin(){ return _fin; }
     //! \name What is the next sequence number? (used for testing)
     //!@{
 
