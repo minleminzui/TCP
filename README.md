@@ -1,3 +1,8 @@
+There are plenty of comments in the code.
+[And I have been writing some thoughts during finishing it.](https://www.cnblogs.com/mlmz/p/15872601.html)
+
+---
+
 For build prereqs, see [the CS144 VM setup instructions](https://web.stanford.edu/class/cs144/vm_howto).
 
 ## Sponge quickstart
