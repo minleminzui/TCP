@@ -29,14 +29,37 @@ void Router::add_route(const uint32_t route_prefix,
     cerr << "DEBUG: adding route " << Address::from_ipv4_numeric(route_prefix).ip() << "/" << int(prefix_length)
          << " => " << (next_hop.has_value() ? next_hop->ip() : "(direct)") << " on interface " << interface_num << "\n";
 
-    DUMMY_CODE(route_prefix, prefix_length, next_hop, interface_num);
+    // DUMMY_CODE(route_prefix, prefix_length, next_hop, interface_num);
     // Your code here.
+    _route_table.push_back({route_prefix, prefix_length, next_hop, interface_num});
 }
 
 //! \param[in] dgram The datagram to be routed
 void Router::route_one_datagram(InternetDatagram &dgram) {
-    DUMMY_CODE(dgram);
+    // DUMMY_CODE(dgram);
     // Your code here.
+    const uint32_t dst_ip_addr = dgram.header().dst;
+    auto match_entry = _route_table.end();
+
+    
+    for(auto iter = _route_table.begin(); iter != _route_table.end(); ++iter){
+        // 根据最长匹配原则匹配路由项，没找到，就通过默认接口0.0.0.0/0转发
+        if(iter->prefix_length == 0 || (iter -> route_prefix ^ dst_ip_addr) >> (32 - iter -> prefix_length) == 0){
+            if(match_entry == _route_table.end() || match_entry -> prefix_length < iter -> prefix_length)
+                match_entry = iter;
+        }
+    }
+
+    if(match_entry != _route_table.end() && dgram.header().ttl-- > 1){
+        const optional<Address> next_hop = match_entry -> next_hop;
+        if(next_hop.has_value())
+            interface(match_entry -> interface_num).send_datagram(dgram, next_hop.value());// optional的取值方法 
+        else
+            interface(match_entry -> interface_num).send_datagram(dgram, Address::from_ipv4_numeric(dst_ip_addr)); 
+            /*If the router is
+                directly attached to the network in question, the next hop will be an empty optional.
+                In that case, the next hop is the datagram’s destination address*/
+    }
 }
 
 void Router::route() {

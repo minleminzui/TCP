@@ -1,5 +1,5 @@
-#include "socket.hh"
-// #include "tcp_sponge_socket.hh"
+// #include "socket.hh"
+#include "tcp_sponge_socket.hh"
 #include "util.hh"
 
 #include <cstdlib>
@@ -9,8 +9,9 @@ using namespace std;
 
 void get_URL(const string &host, const string &path) {
     // Your code here.
-    TCPSocket client_sock;
+    // TCPSocket client_sock;
     // CS144TCPSocket client_sock;
+    FullStackSocket client_sock;
     client_sock.connect(Address(host, "http"));
     string s = "GET " + path + " HTTP/1.1\r\n" + "Host: "+ host +"\r\n" + "Connection: close\r\n\r\n";
     //与手动调用webget一致，将请求内容通过连接传递
@@ -19,8 +20,8 @@ void get_URL(const string &host, const string &path) {
         cout<<client_sock.read();
     }
     // client_sock.shutdown(SHUT_RD);
-    // client_sock.wait_until_closed();
-    client_sock.close();//别忘了关闭套接字
+    client_sock.wait_until_closed();
+    // client_sock.close();//别忘了关闭套接字
     // You will need to connect to the "http" service on
     // the computer whose name is in the "host" string,
     // then request the URL path given in the "path" string.
